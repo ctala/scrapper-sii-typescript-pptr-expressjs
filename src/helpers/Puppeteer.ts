@@ -35,7 +35,8 @@ export default class Puppeteer {
             console.log("Scrapping Started", RUT, DV);
             const imageCapture = "#imgcapt";
             const browser = await puppeteer.launch({
-                headless: true
+                headless: true,
+                args: ['--no-sandbox','--disable-setuid-sandbox']
             })
             const page = await browser.newPage()
 
