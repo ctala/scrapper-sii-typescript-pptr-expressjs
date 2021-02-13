@@ -16,6 +16,7 @@ from './Captcha';
 const fs = require('fs');
 const Path = require('path');
 const axios = require('axios');
+const os = require('os');
 
 export default class Puppeteer {
     private baseUrl: string = "https://zeus.sii.cl";
@@ -70,7 +71,7 @@ export default class Puppeteer {
             const imgId = uuidv4() + ".png";
 
             //IMG FILE PATH
-            const path = Path.resolve(__dirname, '../../tmp', `${imgId}`);
+            const path = Path.resolve(os.tmpdir(), `${imgId}`);
 
 
             await this.downloadImage(imgUrl, path);
