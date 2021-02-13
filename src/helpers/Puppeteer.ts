@@ -169,13 +169,21 @@ export default class Puppeteer {
 
 
                 for (let i = 2; i <= count; i++) {
-                    Array.prototype.slice.call(
+                    const el = Array.prototype.slice.call(
                         document.querySelectorAll(
                             "#contenedor > table:nth-child(25) > tbody > tr:nth-child(" +
                             i +
                             ") > td"
                         )
                     );
+                    const data: Actividad = {
+                        actividad: el[0].textContent.trim(),
+                        codigo: el[1].textContent.trim(),
+                        categoria: el[2].textContent.trim(),
+                        afectaIva: el[3].textContent.trim(),
+                        fecha: el[4].textContent.trim(),
+                    };
+                    actividades.push(data);
                 }
 
             }
