@@ -9,7 +9,14 @@ import {
 
 const puppeteer = new Puppeteer();
 const rutvalidator = require('chileanrutvalidator');
-const port:number = process.env.PORT || 3000;
+const port:number|string = process.env.PORT || 3000;
+
+app.get('/', async (req, res) => {
+    res.send({
+        message: "usa /byrut/:rut"
+    });
+    
+});
 
 app.get('/byrut/:rut', async (req, res) => {
     const rutOriginal = req.params.rut;
