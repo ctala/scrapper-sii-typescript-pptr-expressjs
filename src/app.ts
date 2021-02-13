@@ -39,18 +39,24 @@ app.get('/byrut/:rut', async (req, res) => {
             console.log("CACHE RESULT", err, cachedEmpresa);
 
             if (err == null && cachedEmpresa != null) {
-                const empresa = JSON.parse(cachedEmpresa.toString()); 
+                const empresa = JSON.parse(cachedEmpresa.toString());
                 res.send(empresa);
             } else {
                 const DV = rutOriginal.slice(-1);
                 const RUT = rutOriginal.substring(0, rutOriginal.length - 1);
                 console.log(RUT, DV);
-                const empresa: Empresa = await puppeteer.scrap(RUT, DV);
-                //Cache de 30 díoa
-                await memcached.set(rutOriginal, JSON.stringify(empresa), 60 * 60 * 24 * 30, (errorSet: Error) => {
-                    console.log(errorSet)
-                });
-                res.send(empresa);
+                try {
+                    const empresa: Empresa = await puppeteer.scrap(RUT, DV);
+                    //Cache de 30 díos
+                    await memcached.set(rutOriginal, JSON.stringify(empresa), 60 * 60 * 24 * 30, (errorSet: Error) => {
+                        console.log(errorSet)
+                    });
+                    res.send(empresa);
+                } catch (error) {
+                    console.log(error);
+                    res.status(503).send({message:"SII Sin respuesta"});
+                }
+
             }
         })
 

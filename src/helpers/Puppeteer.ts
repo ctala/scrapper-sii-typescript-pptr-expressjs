@@ -48,76 +48,85 @@ export default class Puppeteer {
                     '--disable-setuid-sandbox',
                 ],
             })
-            const page = await browser.newPage()
 
-            const navigationPromise = page.waitForNavigation()
+            try {
+                const page = await browser.newPage()
 
-            await page.goto(`${this.baseUrl}/cvc/stc/stc.html`)
+                const navigationPromise = page.waitForNavigation()
+    
+                await page.goto(`${this.baseUrl}/cvc/stc/stc.html`)
+    
+                await navigationPromise
+    
+                await page.waitForSelector('#contenedor > #contenido > #form1 #RUT')
+    
+                //
+    
+                await page.type('#contenedor > #contenido > #form1 #RUT', `${RUT}`)
+    
+                await page.type('#contenedor > #contenido > #form1 #DV', `${DV}`)
+    
+                await page.waitFor(imageCapture);
+    
+                const imgSource = await page.evaluate((sel) => {
+                    return document.querySelector(sel).getAttribute("src");
+                }, imageCapture);
+    
+                console.log(imgSource);
+    
+                const imgUrl = `${this.baseUrl}${imgSource}`;
+                console.log(`Captcha URL: ${imgUrl}`);
+                const imgId = uuidv4() + ".png";
+    
+                //IMG FILE PATH
+                const path = Path.resolve(os.tmpdir(), `${imgId}`);
+    
+    
+                await this.downloadImage(imgUrl, path);
+    
+                //Envio img a 2Captcha
+                const result2CaptchaCode = await this.captcha.send2Captcha(path);
+    
+                await this.captcha.timeout(3000);
+    
+                //Obtengo el Código del Captcha
+                const txt_code = await this.captcha.getCaptcha(result2CaptchaCode);
+                console.log(`Captcha Result : ${txt_code}`);
+    
+                //Elimino Imagen
+                fs.unlinkSync(path);
+    
+    
+                await page.waitForSelector('#divCaptcha #txt_code')
+                // await page.click('#divCaptcha #txt_code')
+                await page.type("#txt_code", txt_code);
+    
+                console.log("Llenado Form");
+                // await page.$eval('#form1', form => form.submit());
+                await page.click('#contenedor > #contenido > #form1 > div > input:nth-child(12)')
+                console.log("Form Submited");
+    
+                //Esperamos que la página resultante cargue
+                await page.waitForNavigation({
+                    waitUntil: 'networkidle0'
+                });
+    
+                console.log("Resulted Page");
+    
+                const jsonEmpresa = await this.getDatosEmpresaFromPage(page);
+    
+                console.log(jsonEmpresa);
+    
+                await browser.close();
+    
+                resolve(jsonEmpresa);
+            } catch (error) {
+                //En caso de que haya un error, igual cerramos el browser por problemas de memoria
+                await browser.close();
+                reject(error);
+            }
 
-            await navigationPromise
-
-            await page.waitForSelector('#contenedor > #contenido > #form1 #RUT')
-
-            //
-
-            await page.type('#contenedor > #contenido > #form1 #RUT', `${RUT}`)
-
-            await page.type('#contenedor > #contenido > #form1 #DV', `${DV}`)
-
-            await page.waitFor(imageCapture);
-
-            const imgSource = await page.evaluate((sel) => {
-                return document.querySelector(sel).getAttribute("src");
-            }, imageCapture);
-
-            console.log(imgSource);
-
-            const imgUrl = `${this.baseUrl}${imgSource}`;
-            console.log(`Captcha URL: ${imgUrl}`);
-            const imgId = uuidv4() + ".png";
-
-            //IMG FILE PATH
-            const path = Path.resolve(os.tmpdir(), `${imgId}`);
-
-
-            await this.downloadImage(imgUrl, path);
-
-            //Envio img a 2Captcha
-            const result2CaptchaCode = await this.captcha.send2Captcha(path);
-
-            await this.captcha.timeout(3000);
-
-            //Obtengo el Código del Captcha
-            const txt_code = await this.captcha.getCaptcha(result2CaptchaCode);
-            console.log(`Captcha Result : ${txt_code}`);
-
-            //Elimino Imagen
-            fs.unlinkSync(path);
-
-
-            await page.waitForSelector('#divCaptcha #txt_code')
-            // await page.click('#divCaptcha #txt_code')
-            await page.type("#txt_code", txt_code);
-
-            console.log("Llenado Form");
-            // await page.$eval('#form1', form => form.submit());
-            await page.click('#contenedor > #contenido > #form1 > div > input:nth-child(12)')
-            console.log("Form Submited");
-
-            //Esperamos que la página resultante cargue
-            await page.waitForNavigation({
-                waitUntil: 'networkidle0'
-            });
-
-            console.log("Resulted Page");
-
-            const jsonEmpresa = await this.getDatosEmpresaFromPage(page);
-
-            console.log(jsonEmpresa);
-
-            await browser.close();
-
-            resolve(jsonEmpresa);
+    
         })
 
     }
