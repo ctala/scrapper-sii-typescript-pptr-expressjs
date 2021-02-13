@@ -6,13 +6,22 @@ import {
     Empresa
 } from './models/Empresa';
 
-
-const memjs = require('memjs')
-const mc = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
+const Memcached = require('memcached');
+const memcacheOptions = {
     failover: true, // default: false
     timeout: 1, // default: 0.5 (seconds)
     keepAlive: true // default: false
-})
+};
+
+const memcached = new Memcached(process.env.MEMCACHIER_SERVERS, memcacheOptions);
+
+
+// const memjs = require('memjs')
+// const mc = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
+//     failover: true, // default: false
+//     timeout: 1, // default: 0.5 (seconds)
+//     keepAlive: true // default: false
+// })
 
 
 const puppeteer = new Puppeteer();
@@ -29,7 +38,9 @@ app.get('/', async (req, res) => {
 app.get('/byrut/:rut', async (req, res) => {
     const rutOriginal = req.params.rut;
     if (rutvalidator.validarRut(rutOriginal)) {
-        mc.get(rutOriginal, async (err: Error, cachedEmpresa: Empresa) => {
+        memcached.get(rutOriginal, async (err: Error, cachedEmpresa: Empresa) => {
+
+            console.log("CACHE RESULT", err, cachedEmpresa);
 
             if (err == null && cachedEmpresa != null) {
                 res.send(cachedEmpresa);
@@ -38,9 +49,9 @@ app.get('/byrut/:rut', async (req, res) => {
                 const RUT = rutOriginal.substring(0, rutOriginal.length - 1);
                 console.log(RUT, DV);
                 const empresa: Empresa = await puppeteer.scrap(RUT, DV);
-                mc.set(rutOriginal, {expires:0}, (errSetCache:Error, resultSet:any) => {
-                    console.log(errSetCache,resultSet);
-                })
+                await memcached.set(rutOriginal, empresa, 60 * 60 * 4, (errorSet: Error) => {
+                    console.log(errorSet)
+                });
                 res.send(empresa);
             }
         })
