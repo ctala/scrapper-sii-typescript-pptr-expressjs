@@ -5,8 +5,11 @@ import Puppeteer from "./helpers/Puppeteer";
 import {
     Empresa
 } from './models/Empresa';
+
+
 const puppeteer = new Puppeteer();
 const rutvalidator = require('chileanrutvalidator');
+const port:number = process.env.PORT || 3000;
 
 app.get('/byrut/:rut', async (req, res) => {
     const rutOriginal = req.params.rut;
@@ -23,6 +26,6 @@ app.get('/byrut/:rut', async (req, res) => {
     }
 });
 
-app.listen(3000, function () {
-    console.log('Listening on port 3000!');
+app.listen(port, function () {
+    console.log(`Listening on port ${port}!`);
 });
