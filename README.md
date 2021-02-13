@@ -9,7 +9,7 @@
 
 ## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+Servidor de obtención de datos de empresa a través de API connectandose a la página de Situación Tributaria de Terceros del SII
 
 ## Getting Started <a name = "getting_started"></a>
 
@@ -17,7 +17,6 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
 
 ```
 Give examples
