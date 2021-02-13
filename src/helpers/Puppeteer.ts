@@ -40,7 +40,7 @@ export default class Puppeteer {
                 args: [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
-                  ],
+                ],
             })
             const page = await browser.newPage()
 
@@ -98,71 +98,14 @@ export default class Puppeteer {
             await page.click('#contenedor > #contenido > #form1 > div > input:nth-child(12)')
             console.log("Form Submited");
 
-            await page.waitFor(
-                "#contenedor > table:nth-child(25) > tbody > tr > td:nth-child(1)"
-            );
+            //Esperamos que la página resultante cargue
+            await page.waitForNavigation({
+                waitUntil: 'networkidle0'
+            });
 
             console.log("Resulted Page");
 
-            const jsonEmpresa = await page.evaluate((selector) => {
-
-                const count = document.querySelectorAll(
-                    "#contenedor > table:nth-child(25) > tbody > tr > td:nth-child(1)"
-                ).length;
-
-                let actividades: Actividad[] = [];
-
-                for (let i = 2; i <= count; i++) {
-                    const el = Array.prototype.slice.call(
-                        document.querySelectorAll(
-                            "#contenedor > table:nth-child(25) > tbody > tr:nth-child(" +
-                            i +
-                            ") > td"
-                        )
-                    );
-                    const data: Actividad = {
-                        actividad: el[0].textContent.trim(),
-                        codigo: el[1].textContent.trim(),
-                        categoria: el[2].textContent.trim(),
-                        afectaIva: el[3].textContent.trim(),
-                        fecha: el[4].textContent.trim(),
-                    };
-                    actividades.push(data);
-                }
-
-
-                const nombreRazonSocial: string = document
-                    .querySelector("#contenedor > div:nth-child(4)") !.textContent!.trim();
-
-                const rut: string = document
-                    .querySelector("#contenedor > div:nth-child(7)") !
-                    .textContent!.trim();
-                const inicia: string = document
-                    .querySelector("#contenedor > span:nth-child(12)") !
-                    .textContent!.trim();
-                const fechaInicia: string = document
-                    .querySelector("#contenedor > span:nth-child(14)") !
-                    .textContent!.trim();
-
-                const authExt = document
-                    .querySelector("#contenedor > span:nth-child(16)") !
-                    .textContent!.trim();
-
-                const empTam = document
-                    .querySelector("#contenedor > span:nth-child(18)") !
-                    .textContent!.trim();
-
-                const JsonEmpresa: Empresa = {
-                    nombreRazonSocial,
-                    rut,
-                    inicia,
-                    fechaInicia,
-                    authExt,
-                    empTam,
-                    actividades: actividades,
-                };
-                return JsonEmpresa;
-            }, "#contenedor > table:nth-child(25) > tbody > tr > td:nth-child(1)");
+            const jsonEmpresa = await this.getDatosEmpresaFromPage(page);
 
             console.log(jsonEmpresa);
 
@@ -171,6 +114,85 @@ export default class Puppeteer {
             resolve(jsonEmpresa);
         })
 
+    }
+
+
+    /**
+     * 
+     * @param page 
+     */
+    async getDatosEmpresaFromPage(page: puppeteer.Page) {
+        const result = await page.evaluate((selector) => {
+
+
+
+
+            const nombreRazonSocial: string = document
+                .querySelector("#contenedor > div:nth-child(4)") !.textContent!.trim();
+            console.log(nombreRazonSocial);
+
+            const rut: string = document
+                .querySelector("#contenedor > div:nth-child(7)") !.textContent!.trim();
+            console.log(rut);
+
+            const inicia: string = document
+                .querySelector("#contenedor > span:nth-child(12)") !.textContent!.trim();
+            console.log(inicia);
+
+
+            let fechaInicia: string = "";
+            let authExt: string = "";
+            let empTam: string = "";
+            let actividades: Actividad[] = [];
+
+            //Si no inicia actividades no tiene ninguno de las siguientes variables.
+            if (inicia != "Contribuyente presenta Inicio de Actividades: NO") {
+
+                console.log("NO TIENE INICIO DE ACTIVIDADES");
+
+                fechaInicia = document
+                    .querySelector("#contenedor > span:nth-child(14)") !
+                    .textContent!.trim();
+
+                authExt = document
+                    .querySelector("#contenedor > span:nth-child(16)") !
+                    .textContent!.trim();
+
+                empTam = document
+                    .querySelector("#contenedor > span:nth-child(18)") !
+                    .textContent!.trim();
+
+                //Obtenemos lista de Actividades desde la tabla.
+                const count = document.querySelectorAll(
+                    "#contenedor > table:nth-child(25) > tbody > tr > td:nth-child(1)"
+                ).length;
+
+
+                for (let i = 2; i <= count; i++) {
+                    Array.prototype.slice.call(
+                        document.querySelectorAll(
+                            "#contenedor > table:nth-child(25) > tbody > tr:nth-child(" +
+                            i +
+                            ") > td"
+                        )
+                    );
+                }
+
+            }
+
+            const JsonEmpresa: Empresa = {
+                nombreRazonSocial,
+                rut,
+                inicia,
+                fechaInicia,
+                authExt,
+                empTam,
+                actividades: actividades,
+            };
+            return JsonEmpresa;
+        }, "#contenedor > table:nth-child(25) > tbody > tr > td:nth-child(1)");
+
+        return result;
     }
 
 
