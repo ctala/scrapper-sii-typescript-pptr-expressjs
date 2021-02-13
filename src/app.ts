@@ -6,21 +6,9 @@ import {
     Empresa
 } from './models/Empresa';
 
-// const Memcached = require('memcached');
-// const memcacheOptions = {
-//     failover: true, // default: false
-//     timeout: 1, // default: 0.5 (seconds)
-//     keepAlive: true // default: false
-// };
-
-// const memcached = new Memcached(process.env.MEMCACHIER_SERVERS, memcacheOptions);
-
-// memcached.connect( process.env.MEMCACHIER_SERVERS, ( err:Error, conn:any )=>{
-//     if( err ) {
-//        console.log( conn.server );
-//     }
-//   });
-
+/**
+ * Cacheamos las  respuestas al ser pesada la operación.
+ */
 const memjs = require('memjs')
 const memcached = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
     failover: true, // default: false
@@ -40,6 +28,9 @@ app.get('/', async (req, res) => {
 
 });
 
+/**
+ * Devuelve el objeto empresa correspondiente
+ */
 app.get('/byrut/:rut', async (req, res) => {
     const rutOriginal = req.params.rut;
     if (rutvalidator.validarRut(rutOriginal)) {
