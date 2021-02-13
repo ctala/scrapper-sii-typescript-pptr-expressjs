@@ -17,7 +17,7 @@ const fs = require('fs');
 const Path = require('path');
 const axios = require('axios');
 const os = require('os');
-const IS_DEV = process.env.NODE_ENV === 'test';
+
 
 
 
@@ -28,7 +28,6 @@ export default class Puppeteer {
 
     constructor() {
         this.captcha = new Captcha();
-        console.log("DEV ENV",process.env.NODE_ENV,IS_DEV);
     }
 
     /**
@@ -41,9 +40,14 @@ export default class Puppeteer {
             console.log("Scrapping Started", RUT, DV);
             const imageCapture = "#imgcapt";
 
-            const browser = await this.getBrowser();
 
-            // const browser = await puppeteer.launch()
+            const browser = await puppeteer.launch({
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                ],
+            })
             const page = await browser.newPage()
 
             const navigationPromise = page.waitForNavigation()
@@ -206,21 +210,7 @@ export default class Puppeteer {
     }
 
 
-    getBrowser = () => !IS_DEV ?
-
-        // Connect to browserless so we don't run Chrome on the same hardware in production
-        puppeteer.connect({
-            browserWSEndpoint: 'wss://chrome.browserless.io?token=3cde03ac-4715-4732-8613-e86223af16e4'
-        }) :
-
-        // Run the browser locally while in development
-        puppeteer.launch({
-            headless: false,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-            ],
-        });
+     
 
     /**
      * 

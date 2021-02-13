@@ -46,8 +46,7 @@ app.get('/byrut/:rut', async (req, res) => {
                 const RUT = rutOriginal.substring(0, rutOriginal.length - 1);
                 console.log(RUT, DV);
                 const empresa: Empresa = await puppeteer.scrap(RUT, DV);
-                
-                //Cache de 30 días
+                //Cache de 30 díoa
                 await memcached.set(rutOriginal, JSON.stringify(empresa), 60 * 60 * 24 * 30, (errorSet: Error) => {
                     console.log(errorSet)
                 });
