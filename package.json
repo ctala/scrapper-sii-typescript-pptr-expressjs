@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "dev": "NODE_ENV=test && MEMCACHIER_SERVERS=127.0.0.1:11211 && tsc && node ./dist/app.js",
+    "dev": "export NODE_ENV=test && MEMCACHIER_SERVERS=127.0.0.1:11211 && tsc && node ./dist/app.js",
     "start": "tsc && pm2-runtime start ./dist/app.js --env production"
   },
   "author": "Cristian Tala Sánchez",
