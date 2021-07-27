@@ -30,6 +30,15 @@ Como la página de terceros del SII usa un captcha simple, el único pre-requisi
 
 Es aconsejable un servidor de memcached, sin embargo en caso de no usarla simplemente mostrará error en la consola.
 
+### Variables de entorno
+
+El código usa las siguientes variables de entorno.
+
+- CAPTCHA_KEY . Key de [2Captcha](https://2captcha.com?from=9243447) (REQUERIDO)
+- MEMCACHIER_USERNAME . Usuario del servidor memcached.
+- MEMCACHIER_SERVERS . HOST del servidor memcached.
+- MEMCACHIER_PASSWORD . Clave del servidor de Memcached.
+
 ### Instalando
 
 Para instalar todas las dependencias simplemente usar npm
