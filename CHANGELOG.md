@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keep a changelog] and this project adheres to [Semantic Versioning][semantic versioning].
 
-## [Unreleased]
+## [0.1.1]
 
 ### ADDED
 
@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 ### MODIFIED
 
 - Fixed getting activities from SII because a change on the layout.
+- Modified captcha key to use environment variable.
 
 ---
 

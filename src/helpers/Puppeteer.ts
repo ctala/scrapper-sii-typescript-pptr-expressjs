@@ -76,7 +76,7 @@ export default class Puppeteer {
         const txt_code = await this.captcha.getCaptcha(result2CaptchaCode);
         if (txt_code.length != 4) {
           browser.close();
-          reject(new Error("Error Captcha"));
+          reject(new Error("ERROR_CAPTCHA"));
         }
         console.log(`Captcha Result : ${txt_code}`);
 

@@ -54,7 +54,9 @@ app.get("/byrut/:rut", async (req, res) => {
           res.send(empresa);
         } catch (error) {
           console.log(error);
-          res.status(503).send({ message: "SII Sin respuesta" });
+          res
+            .status(503)
+            .send({ message: "SII Sin respuesta o error en Captcha" });
         }
       }
     });

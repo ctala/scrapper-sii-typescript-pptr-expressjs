@@ -1,45 +1,53 @@
-# Project Title
+# SII Scrapper
 
-## Table of Contents
+## Contenido
 
-- [About](#about)
-- [Getting Started](#getting_started)
-- [Usage](#usage)
-- [Contributing](../CONTRIBUTING.md)
+- [Sobre el Scrapper](#about)
+- [Comenzando](#getting_started)
+- [Uso](#usage)
+- [Autores](#authors)
 
-## About <a name = "about"></a>
+## Sobre el Scrapper <a name = "about"></a>
 
-Servidor de obtención de datos de empresa a través de API connectandose a la página de Situación Tributaria de Terceros del SII
+Scrapper de obtención de datos de empresa a través de API conectándose a la página de Situación Tributaria de Terceros del SII. Está diseñado para usar un servidor de memcache, pero funciona sin problemas al no tenerlo.
 
-## Getting Started <a name = "getting_started"></a>
+Para pruebas recomiendo bajar con docker un servidor de memcached.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+### Tecnologías
 
-### Prerequisites
+- ExpressJS
+- Puppetter
+- Headless Chrome
+- NodeJS
+- Typescript
+- 2Captcha
 
+## Comenzando <a name = "getting_started"></a>
+
+### Requerimientos
+
+Como la página de terceros del SII usa un captcha simple, el único pre-requisito es tener un KEY de [2Captcha](https://2captcha.com?from=9243447)
+
+Es aconsejable un servidor de memcached, sin embargo en caso de no usarla simplemente mostrará error en la consola.
+
+### Instalando
+
+Para instalar todas las dependencias simplemente usar npm
 
 ```
-Give examples
+npm i
 ```
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
+Esto también instalará la versión headless de Chrome.
 
 ## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+Para probar de manera local simplemente en un browser puedes ir directamente a :
+
+`http://localhost:3000/byrut/RUT`
+
+En dónde RUT es el RUT a consultar sin puntos ni guión.
+
+## Autores y Contribuidores <a name = "authors"></a>
+
+- Cristian Tala
