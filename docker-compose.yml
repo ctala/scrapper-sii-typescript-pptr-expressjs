@@ -1,0 +1,16 @@
+version: "2.4"
+
+services:
+  scrapper:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - cache
+    environment:
+      MEMCACHIER_SERVERS: "cache:11211"
+      CAPTCHA_KEY: "XXXXX"
+  cache:
+    image: bitnami/memcached:latest
+    ports:
+      - "11211:11211"

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keep a changelog] and this project adheres to [Semantic Versioning][semantic versioning].
 
+## [0.1.2]
+
+### ADDED
+
+- Docker File
+- Docker Compose File
+
 ## [0.1.1]
 
 ### ADDED
