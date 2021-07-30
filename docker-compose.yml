@@ -1,6 +1,4 @@
 version: "2.4"
-# this only shows dependency relationships
-# it won't wait for db to be ready before starting node
 
 services:
   scrapper:
