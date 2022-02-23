@@ -7,8 +7,7 @@ const Path = require("path");
 export default class Captcha {
   private key: string;
   constructor() {
-    // this.key = process.env.CAPTCHA_KEY!;
-    this.key = "44bcf12d53de8363c4e272abb25ca4fd";
+    this.key = process.env.CAPTCHA_KEY!;
     console.log(this.key);
   }
 
