@@ -29,7 +29,7 @@ export default class Puppeteer {
       const imageCapture: string = "#imgcapt";
 
       const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
