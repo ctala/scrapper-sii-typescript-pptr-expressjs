@@ -9,7 +9,7 @@ services:
       - cache
     environment:
       MEMCACHIER_SERVERS: "cache:11211"
-      CAPTCHA_KEY: "XXXXX"
+      CAPTCHA_KEY: "44bcf12d53de8363c4e272abb25ca4fd"
   cache:
     image: bitnami/memcached:latest
     ports:

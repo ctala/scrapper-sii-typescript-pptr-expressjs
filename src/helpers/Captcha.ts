@@ -7,7 +7,9 @@ const Path = require("path");
 export default class Captcha {
   private key: string;
   constructor() {
-    this.key = process.env.CAPTCHA_KEY!;
+    // this.key = process.env.CAPTCHA_KEY!;
+    this.key = "44bcf12d53de8363c4e272abb25ca4fd";
+    console.log(this.key);
   }
 
   /**
@@ -32,18 +34,20 @@ export default class Captcha {
       data: data,
     };
 
+    // console.log(data);
     return new Promise((resolve, reject) => {
       axios(config)
         .then(function (response: AxiosResponse) {
           console.log(JSON.stringify(response.data));
           const result = response.data.split("|");
+          console.log("CAPTCHA RESULT", result);
           if (result[0] == "OK") {
             resolve(result[1]);
           }
           reject(response.data);
         })
-        .catch(function (error: Error) {
-          console.log(error);
+        .catch((error: Error) => {
+          console.log("ERROR ENVIANDO EL CAPTCHA", error);
           reject(error);
         });
     });
@@ -56,7 +60,7 @@ export default class Captcha {
   getCaptcha(codeId: string): Promise<string> {
     const config = {
       method: "get",
-      url: `http://2captcha.com/res.php?key=ea9524c70d5eefcad9cdfdfdc91d3e0f&action=get&id=${codeId}`,
+      url: `http://2captcha.com/res.php?key=${this.key}&action=get&id=${codeId}`,
       headers: {},
     };
 

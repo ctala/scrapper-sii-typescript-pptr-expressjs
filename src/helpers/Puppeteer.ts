@@ -26,10 +26,10 @@ export default class Puppeteer {
   async scrap(RUT: string, DV: string): Promise<Empresa> {
     return new Promise(async (resolve, reject) => {
       console.log("Scrapping Started", RUT, DV);
-      const imageCapture = "#imgcapt";
+      const imageCapture: string = "#imgcapt";
 
       const browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
@@ -42,21 +42,22 @@ export default class Puppeteer {
 
         await navigationPromise;
 
-        await page.waitForSelector("#contenedor > #contenido > #form1 #RUT");
+        //Escribimos el RUT
+        await page.waitForSelector("#RUT");
+        await page.type("#RUT", `${RUT}`);
 
-        //
+        //Escribimos el Digito Verificador
+        await page.waitForSelector("#DV");
+        await page.type("#DV", `${DV}`);
 
-        await page.type("#contenedor > #contenido > #form1 #RUT", `${RUT}`);
+        await page.waitForSelector(imageCapture);
 
-        await page.type("#contenedor > #contenido > #form1 #DV", `${DV}`);
-
-        await page.waitFor(imageCapture);
-
-        const imgSource = await page.evaluate((sel) => {
-          return document.querySelector(sel).getAttribute("src");
+        //Obtenemos la imagen del Captcha
+        const imgSource = await page.evaluate(() => {
+          return document.querySelector("#imgcapt")?.getAttribute("src");
         }, imageCapture);
 
-        console.log(imgSource);
+        console.log("imgSource", imgSource);
 
         const imgUrl = `${this.baseUrl}${imgSource}`;
         console.log(`Captcha URL: ${imgUrl}`);
@@ -64,7 +65,9 @@ export default class Puppeteer {
 
         //IMG FILE PATH
         const path = Path.resolve(os.tmpdir(), `${imgId}`);
+        console.log("Downloading IMG to ", path);
 
+        //Descargamos el Captcha para poder enviarlo
         await this.downloadImage(imgUrl, path);
 
         //Envio img a 2Captcha
@@ -74,13 +77,14 @@ export default class Puppeteer {
 
         //Obtengo el Código del Captcha
         const txt_code = await this.captcha.getCaptcha(result2CaptchaCode);
+        console.log(`Captcha Result : ${txt_code}`);
         if (txt_code.length != 4) {
           browser.close();
           reject(new Error("ERROR_CAPTCHA"));
         }
         console.log(`Captcha Result : ${txt_code}`);
 
-        //Elimino Imagen
+        //Elimino Imagen Local
         fs.unlinkSync(path);
 
         await page.waitForSelector("#divCaptcha #txt_code");
